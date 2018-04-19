@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{64CB2844-8D0D-499E-A4BE-71ABBC41E537}</ProjectGuid>
-    <RootNamespace>indLib</RootNamespace>
+    <RootNamespace>iksLib</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

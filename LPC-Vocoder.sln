@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LPC-Vocoder", "LPC-Vocoder\
 		{64CB2844-8D0D-499E-A4BE-71ABBC41E537} = {64CB2844-8D0D-499E-A4BE-71ABBC41E537}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "indLib", "indLib\indLib.vcxproj", "{64CB2844-8D0D-499E-A4BE-71ABBC41E537}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iksLib", "iksLib\iksLib.vcxproj", "{64CB2844-8D0D-499E-A4BE-71ABBC41E537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
