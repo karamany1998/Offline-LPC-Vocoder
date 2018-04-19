@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LPC-Vocoder", "LPC-Vocoder\LPC-Vocoder.vcxproj", "{CF4F4D48-B889-474F-8715-802B049F7D59}"
+	ProjectSection(ProjectDependencies) = postProject
+		{64CB2844-8D0D-499E-A4BE-71ABBC41E537} = {64CB2844-8D0D-499E-A4BE-71ABBC41E537}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "indLib", "indLib\indLib.vcxproj", "{64CB2844-8D0D-499E-A4BE-71ABBC41E537}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF4F4D48-B889-474F-8715-802B049F7D59}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CF4F4D48-B889-474F-8715-802B049F7D59}.Debug|Win32.Build.0 = Debug|Win32
+		{CF4F4D48-B889-474F-8715-802B049F7D59}.Release|Win32.ActiveCfg = Release|Win32
+		{CF4F4D48-B889-474F-8715-802B049F7D59}.Release|Win32.Build.0 = Release|Win32
+		{64CB2844-8D0D-499E-A4BE-71ABBC41E537}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64CB2844-8D0D-499E-A4BE-71ABBC41E537}.Debug|Win32.Build.0 = Debug|Win32
+		{64CB2844-8D0D-499E-A4BE-71ABBC41E537}.Release|Win32.ActiveCfg = Release|Win32
+		{64CB2844-8D0D-499E-A4BE-71ABBC41E537}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
