@@ -4,6 +4,6 @@ using namespace std;
 
 int main()
 {
-	cout << "Willkommen am IND!" << endl;
+	cout << "Willkommen am IKS!" << endl;
 	return(1);
 }
