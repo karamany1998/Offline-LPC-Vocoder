@@ -1,5 +1,5 @@
 # Institutsprojekt: Entwicklung eines niederratigen Sprachcodecs
-Dies ist die Code-Vorgabe für das 4.-Semesterprojekt.
+Dies ist die Code-Vorgabe für das 4.-Semesterprojekt. 
 
 # Hinweise
 
