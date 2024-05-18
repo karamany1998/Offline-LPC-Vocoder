@@ -32,7 +32,6 @@ void test3()
 	wavEinlesen object2(name);
 	object2.readFile();
 
-
 }
 
 
@@ -62,10 +61,24 @@ void test4()
 	obj2.readFile();
 
 
-
 }
 
 
+void MileStone4()
+{
+	cout << "==================================================" << endl;
+	cout << "PCM to Wav conversion... " << endl;
+
+	//ask user for the pcm file name
+	string pcmName; 
+	cout << "Please enter the PCM file name " << endl;
+	cin >> pcmName;
+	wavWrite wavWriterObject;
+	//wavWriterObject will call the convertPCMToWav method and write output a wavFile
+	wavWriterObject.convertPCMToWav(pcmName);
+}
+
+/*
 //a function that converts a pcm file to a wav file 
 void convertPCMToWAV()
 {
@@ -139,6 +152,8 @@ void convertPCMToWAV()
 	fclose(pcm2wav_handle);
 
 }
+*/
+
 
 int main()
 {
@@ -146,10 +161,11 @@ int main()
 	cout << "size of short is " << sizeof(short) << endl;
 	//test2();
 	//test3();
-	//test4();
+
+	MileStone4();
 
 
-	convertPCMToWAV();
+	
 
 	return 0; 
 }
