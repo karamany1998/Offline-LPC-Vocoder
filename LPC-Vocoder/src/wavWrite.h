@@ -22,6 +22,7 @@ public:
 	wavWrite();
 	wavWrite(wavEinlesen readFile);
 	void writeFile(string newName);
+	void convertPCMToWav(string pcmName);
 
 
 	string returnType()
