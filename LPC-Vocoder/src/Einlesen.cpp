@@ -1,7 +1,7 @@
 #include "Einlesen.h"
 #include <cstring>
 #include <iostream>
-
+#include <vector>
 
 using namespace std;
 
@@ -15,6 +15,19 @@ Einlesen::Einlesen(std::string name)
 
 }
 
+
+
+vector<vector<short>> Einlesen::getAudioData()
+{
+	return this->audioRahmen;
+}
+
+
+string Einlesen::getName()
+{
+	return this->name;
+}
+
 void Einlesen::readFile()
 {
 	FILE* handle = NULL;
@@ -22,7 +35,7 @@ void Einlesen::readFile()
 	handle = fopen(currName.c_str() , "rb");
 
 	short buffer[160];
-
+	vector<short> buffer2;
 
 	//read 160 bytes at each step to get sound values
 	//and out put to console
@@ -31,18 +44,19 @@ void Einlesen::readFile()
 	{
 		while (fread(buffer, sizeof(short), 160, handle))
 		{
-
 			for (int i = 0; i < 160; i++)
 			{
-				cout << buffer[i] << " ";
+				//cout << buffer[i] << " ";
+				buffer2.push_back(buffer[i]); //saves values from .srt file in the buffer2 vector
 			}
+			cout << "size of buffer2 is " << buffer2.size() << endl;
+			this->audioRahmen.push_back(buffer2);
 			cout << endl;
-
+			buffer2.clear();
 		}
-
 	}
-
-	fclose(handle);
 	
-
+	fclose(handle);
 }
+
+

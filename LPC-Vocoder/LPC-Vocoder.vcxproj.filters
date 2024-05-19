@@ -29,12 +29,36 @@
     <ClCompile Include="target\example.cpp">
       <Filter>Quelldateien\target</Filter>
     </ClCompile>
+    <ClCompile Include="src\Einlesen.cpp">
+      <Filter>Quelldateien\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Write.cpp">
+      <Filter>Quelldateien\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wavEinlesen.cpp">
+      <Filter>Quelldateien\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wavWrite.cpp">
+      <Filter>Quelldateien\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\openLoopPitchEstimation.h">
       <Filter>Headerdateien\src</Filter>
     </ClInclude>
     <ClInclude Include="src\tools.h">
+      <Filter>Headerdateien\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Einlesen.h">
+      <Filter>Headerdateien\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wavEinlesen.h">
+      <Filter>Headerdateien\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Write.h">
+      <Filter>Headerdateien\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wavWrite.h">
       <Filter>Headerdateien\src</Filter>
     </ClInclude>
   </ItemGroup>

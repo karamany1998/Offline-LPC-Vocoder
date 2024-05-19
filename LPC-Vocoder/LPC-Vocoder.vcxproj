@@ -18,13 +18,13 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -93,15 +93,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Einlesen.cpp" />
     <ClCompile Include="src\openLoopPitchEstimation.cpp" />
     <ClCompile Include="src\tools.cpp" />
+    <ClCompile Include="src\wavEinlesen.cpp" />
+    <ClCompile Include="src\wavWrite.cpp" />
+    <ClCompile Include="src\Write.cpp" />
     <ClCompile Include="target\example.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Einlesen.h" />
     <ClInclude Include="src\openLoopPitchEstimation.h" />
     <ClInclude Include="src\tools.h" />
+    <ClInclude Include="src\wavEinlesen.h" />
+    <ClInclude Include="src\wavWrite.h" />
+    <ClInclude Include="src\Write.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iksLib\iksLib.vcxproj">
