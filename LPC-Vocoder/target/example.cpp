@@ -104,6 +104,7 @@ void convertSamplesToLPC()
 	cin >> wavName;
 	wavEinlesen readerObj(wavName);
 	readerObj.readFile();
+
 	vector<vector<short>>& currVec = readerObj.audioRahmen; 
 	vector<valarray<short>> valArr;
 
@@ -118,22 +119,16 @@ void convertSamplesToLPC()
 	}
 
 
-	vector<valarray<double>> LSF_vec; 
+	vector<valarray<double>> LPC_vec; 
 
 	//construct the hamming function(will be used later to computer Line Spectral Frequencies)
 	double arrayWindowSpeech[10 + 160 + 80];	
+
 	for (int idx = 0; idx < 250; idx++)
 	{	
-		if (idx == 240)	//used for debugging
-		{
-			arrayWindowSpeech[idx] = hammingWindow(idx, 125, 10 + 160 + 80);
-		}
-		else
-		{
-			arrayWindowSpeech[idx] = hammingWindow(idx, 125, 10 + 160 + 80);
-		}
 		
-
+		arrayWindowSpeech[idx] = hammingWindow(idx, 125, 250);
+		
 	}
 	
 
@@ -145,55 +140,81 @@ void convertSamplesToLPC()
 		int n = valArr.size();
 		valarray<short> lookBackVec(valArr[i][0] , 10); // default set to first value
 		valarray<short> lookAheadVec(valArr[i][159] , 80);  //default set to last value
+
 		vector<double> combinedSamples; 
 
 
-		if (i != 0 )	//we can get both 10 lookBack samples 
+		
+		if (i >0 )	//we can get 10 lookBack samples 
 		{
-			lookBackVec = valArr[i - 1][slice(160 - 11, 10, 1)];		
+			lookBackVec = valArr[i - 1][slice(150, 10, 1)];		
 		}
-		if (i != valArr.size() - 1)
+		if (i < valArr.size() - 1)	//we can get 80 lookAhead samples
 		{
-			lookAheadVec = valArr[i + 1][slice(160 - 80 - 1, 80, 1)];
+			lookAheadVec = valArr[i + 1][slice(160 - 80 , 80, 1)];
 		}
 		
+		
+
+		//now combined samples has 10+160 + 80 samples
 		for (int j = 0; j < lookBackVec.size(); j++)combinedSamples.push_back(lookBackVec[j]);
 		for (int j = 0; j < valArr[i].size(); j++)combinedSamples.push_back(valArr[i][j]);
 		for (int j = 0; j < lookAheadVec.size(); j++)combinedSamples.push_back(lookAheadVec[j]);
 
 
-		//now combined samples has 10+160 + 80 samples
-		//we can now use speech2lsp_array
+
+		
+		
+
+		
+		//we can now use speech2lsp_array  and convertLsf2Lpc to get the LPC- coefficients
+
+
 		double outputLSF[10];
-		double outputLPC[10];
+		double outputLPC[11];
 	
-		double arrayWindowCorrelation[10];
-		for (int k = 0; k < 10; k++)arrayWindowCorrelation[k] = 1;
+		double arrayWindowCorrelation[11];
+		for (int k = 0; k < 11; k++)arrayWindowCorrelation[k] = 1;
 
 		
 		speech2lsp_array(combinedSamples.data(), outputLSF, 250, 10, arrayWindowSpeech , arrayWindowCorrelation);
+
 		convertLsf2Lpc(outputLSF, outputLPC, 10);
 
-		cout << "LPC Coefficients for i = " <<i<<" are "<< endl;
-
-
-		for (int k = 0; k < 10; k++)
-		{
-			cout << outputLPC[k] << " ";
-		}
-
-		cout << endl;
 		
 
+		
 
+		valarray<double> lpcCurr(outputLPC, 11);
+		LPC_vec.push_back(lpcCurr);
+
+
+		if (i == 639)
+		{
+			cout << "reached end " << endl;
+		}
 
 		
 	}
 
+
+	
+	cout << "========================================================================" << endl;
+	cout << "The LPC Coefficients computed are :::" << endl;
+
+	for (int i = 0; i < LPC_vec.size(); i++)
+	{
+		cout << i << ": ";
+		for (int j = 0; j < LPC_vec[i].size(); j++)
+		{
+			cout << LPC_vec[i][j] << " ";
+		}
+		cout << endl;
+	}
 	
 
 
-
+	
 
 
 }
@@ -202,7 +223,6 @@ void convertSamplesToLPC()
 int main()
 {
 	
-	cout << "size of short is " << sizeof(short) << endl;
 	//test2();
 	//test3();
 
