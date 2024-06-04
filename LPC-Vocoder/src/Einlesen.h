@@ -16,13 +16,12 @@ protected:
 
 public:
 
-	//friend class Write; 
+	 
 
 	vector< vector<short> > audioRahmen;
 
 
 	Einlesen(); //Default ctor
-
 	Einlesen(std::string name); //Ctor that gets name of file to open
 
 	void readFile();
