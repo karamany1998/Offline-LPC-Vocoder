@@ -106,4 +106,6 @@ void LPAnalysis::convertSamplesToLPC()
 		cout << endl;
 	}
 
+	LPC_Coefficients = LPC_vec;
+
 }

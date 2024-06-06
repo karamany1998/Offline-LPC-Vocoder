@@ -25,12 +25,12 @@ protected:
 
 	wavEinlesen audioFile;
 	string name;
-	vector<valarray<double>> LPC_Coefficients;
+	//vector<valarray<double>> LPC_Coefficients;
 
 
 
 public: 
-
+	vector<valarray<double>> LPC_Coefficients;
 	LPAnalysis(wavEinlesen audioClass);
 	void convertSamplesToLPC();
 
