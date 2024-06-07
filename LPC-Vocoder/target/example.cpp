@@ -160,20 +160,33 @@ void determineRestSignal()
 
 	 
 	cout << "Filtering the input signal is over..." << endl;
-	cout << "press any key to continue " << endl;
-	cout << "=============================================================" << endl;
-	cout << "The rest signal after filtering is:: " << endl;
-
-	string x; cin >> x;
 	
+	cout << "=============================================================" << endl;
+
+	cout << "what name would you like to name the rest signal " << endl;
+	
+	string restSignalName; 
+	cin >> restSignalName; 
+	
+	cout << "The rest signal after filtering is:: " << endl;
+	
+	vector<vector<short>> restSignal_short(restSignal.size());
 	for (int i = 0; i < restSignal.size(); i++)
 	{
+		/*
 		for (int j = 0; j < restSignal[i].size(); j++)
 		{
 			cout << restSignal[i][j] << " ";
 		}
+		*/
+		
+		vector<short> vec(restSignal[i].begin(), restSignal[i].end());
+		//for (auto& x : vec)cout << x << " ";
 		cout << endl;
+		restSignal_short[i] = vec;
 	}
+	wavWrite wavObject(restSignal_short);
+	wavObject.convertVectorToWav(restSignalName);
 
 }
 
