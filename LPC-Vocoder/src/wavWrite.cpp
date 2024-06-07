@@ -16,6 +16,11 @@ wavWrite::wavWrite(wavEinlesen readFile)	//take information from the readFile an
 
 }
 
+wavWrite::wavWrite(vector<vector<short>> vec)
+{
+	this->internalValues = vec; 
+}
+
 void wavWrite::writeFile(string newName)
 {
 	vector<vector<short>>& data = this->audioFile.audioRahmen; //data is reference to audioRahmen in the audioFile
@@ -117,4 +122,63 @@ void wavWrite::convertPCMToWav(string pcmName)
 	cout << "=============================================================================================" << endl;
 	cout << "=============================================================================================" << endl;
 	fclose(pcm2wav_handle);
+}
+
+
+void wavWrite::convertVectorToWav(string wavName)
+{
+
+
+	FILE* handle = fopen((wavName + ".wav").c_str(), "wb");
+
+
+	vector<vector<short>>& audioFrame = this->internalValues;
+
+	//Values used for the wav file header (the header has information about the size, number of channels, sampling rate..etc)
+	char* riff = "RIFF";
+	char* wav = "WAVE";
+	char* str3 = "fmt ";
+	char* data = "data";
+
+
+	unsigned int sizePCM = audioFrame.size() * 160 * 2;  //size is how many frames*size of each frame * 2 bytes
+	unsigned int lenFormat = 0x10;
+	short anotherInt = 0x01;
+	short numChannels = 1;
+	unsigned int sampleRate = 8000;
+	unsigned int bytesPerSecond = 16000;
+
+	short bytesPerSample = 2;
+	short bitsPerSample = 16;
+
+	unsigned int totalLengthBytes = sizePCM + (44 - 8);
+	unsigned int fileLength = sizePCM;
+
+
+	//Write the header file for the wave file at the beginning
+	fwrite(riff, 1, strlen(riff), handle);	//write "RIFF" to wavFile
+	fwrite(&totalLengthBytes, 4, 1, handle);		//write fileSize to wavFile
+	fwrite(wav, strlen(wav), 1, handle); //write "WAVE" to file
+	fwrite(str3, strlen(str3), 1, handle); // write "fmt␣" to file
+	fwrite(&lenFormat, 4, 1, handle);
+	fwrite(&anotherInt, 2, 1, handle);
+	fwrite(&numChannels, 2, 1, handle);
+	fwrite(&sampleRate, 4, 1, handle);
+	fwrite(&bytesPerSecond, 4, 1, handle);
+	fwrite(&bytesPerSample, 2, 1, handle);
+	fwrite(&bitsPerSample, 2, 1, handle);
+	fwrite(data, strlen(data), 1, handle);
+	fwrite(&fileLength, 4, 1, handle);
+
+
+	//after the header, write the pcm file samples to the output file(Pcm files have only the samples)
+	for (int i = 0; i < audioFrame.size(); i++)
+	{
+		int num = fwrite(&audioFrame[i][0], sizeof(short), audioFrame[i].size(), handle);
+
+	}
+
+	fclose(handle);
+
+
 }

@@ -14,14 +14,17 @@ class wavWrite : public Write
 protected:
 
 	wavEinlesen audioFile;
+	vector<vector<short>> internalValues;
+	
 
 
 public:
 
-
 	wavWrite();
+	wavWrite(vector<vector<short>> vec);
 	wavWrite(wavEinlesen readFile);
 	void writeFile(string newName);
+	void convertVectorToWav(string wavName);
 	void convertPCMToWav(string pcmName);
 
 
