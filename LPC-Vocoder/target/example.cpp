@@ -139,20 +139,32 @@ void determineRestSignal()
 	
 	vector<vector<double>> restSignal;
 
+	//move over all the frames
 	for (int i = 0; i < audioFrames.size(); i++)
 	{
+		//copy current frame as vector of doubles
+		std::vector<double> currentFrame(audioFrames[i].begin(), audioFrames[i].end()); 
 
-		std::vector<double> currentFrame(audioFrames[i].begin(), audioFrames[i].end());
-		double outputBuffer[160];
+		//array used to save output frame after filtering the input frame
+		double outputBuffer[160]; 
+
+		//the current LPC-Coefficients for frame i
 		double currentCoefficient[11];
 		for (int j = 0; j < 11; j++)currentCoefficient[j] = LPC_coefficients[i][j];
 
+		//initalize the FIR-filter
 		InitFIR(initalStates, currentCoefficient , 11);
+
+		//execute the FIR-operation and save the result in output buffer
 		ExecuteFIRDF2(currentFrame.data(), outputBuffer, audioFrames[i].size());
+
+		//save the array in the vector curr and push it to the vector of vectors called restSignal
 		vector<double> curr(outputBuffer , outputBuffer+160);
 		restSignal.push_back(curr);
 
-		ReturnStatesFIR(initalStates); //save the internal states to the initialStates array
+		//save the internal states to the initialStates array(the FIR changes internally after each iteration, so we need to save this change for the next 
+		//iteration
+		ReturnStatesFIR(initalStates); 
 
 		TerminateFIR(); //terminate FIR-filter and iterate to the next audio frame with the modified states
 	
