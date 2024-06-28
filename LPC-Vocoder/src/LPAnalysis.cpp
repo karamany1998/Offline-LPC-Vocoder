@@ -10,14 +10,23 @@ LPAnalysis::LPAnalysis(wavEinlesen audioClass)
 }
 
 
+LPAnalysis::LPAnalysis(vector<vector<short>> vec)
+{
+	this->audioFrames = vec;
+}
 
 
-void LPAnalysis::convertSamplesToLPC()
+
+vector<vector<double>> LPAnalysis::convertSamplesToLPC()
 {
 
 	//for this function,  we will read a wav file.
 	
-	vector<vector<short>>& currVec = this->audioFile.audioRahmen; //the current audio frames
+	//(Change 25/06 - Testing class with internal sample values, rather than referring to the audioFile object - need this change for mileStone7)
+	//vector<vector<short>>& currVec = this->audioFile.audioRahmen; //the current audio frames
+
+	//(Modification --- the class will refer to internal audio frames, rather than accessing it from another class)
+	vector<vector<short>>  currVec = this->audioFrames;
 	vector<valarray<short>> valArr;
 
 
@@ -30,7 +39,7 @@ void LPAnalysis::convertSamplesToLPC()
 
 
 	vector<valarray<double>> LPC_vec;	//a vector of valarrays where each valarray has the 11 LPC Coefficients
-
+	vector<vector<double>> retVal;
 
 	//construct the hamming function(will be used later to computer Line Spectral Frequencies)
 	double arrayWindowSpeech[10 + 160 + 80];
@@ -86,7 +95,9 @@ void LPAnalysis::convertSamplesToLPC()
 
 
 		valarray<double> lpcCurr(outputLPC, 11);
+		vector<double> vec5(outputLPC, outputLPC + 11);
 		LPC_vec.push_back(lpcCurr);
+		retVal.push_back(vec5);
 
 
 	}
@@ -98,14 +109,15 @@ void LPAnalysis::convertSamplesToLPC()
 
 	for (int i = 0; i < LPC_vec.size(); i++)
 	{
-		cout << i << ": ";
+		//cout << i << ": ";
 		for (int j = 0; j < LPC_vec[i].size(); j++)
 		{
-			cout << LPC_vec[i][j] << " ";
+		//	cout << LPC_vec[i][j] << " ";
 		}
-		cout << endl;
+		//cout << endl;
 	}
 
 	LPC_Coefficients = LPC_vec;
+	return retVal;
 
 }

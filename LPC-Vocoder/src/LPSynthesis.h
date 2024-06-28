@@ -5,23 +5,25 @@
 #include <wavEinlesen.h>
 #include <valarray>
 
+
 extern "C"
 {
 #include "FIR.h"
+#include "IIR.h"
 #include "speech2Lsf.h"
 #include "signalUtils.h"
 #include "lsflpcUtils.h"
-}
 
+}
 
 
 using namespace std;
 
-class LPAnalysis
+class LPSynthesis
 {
 
 
-protected: 
+protected:
 
 	wavEinlesen audioFile;
 	string name;
@@ -29,13 +31,15 @@ protected:
 
 
 
-public: 
-	vector<valarray<double>> LPC_Coefficients;
-	vector<vector<short>> audioFrames;
+public:
+	vector<vector<double>> LPC_Coefficients;
+	vector<vector<double>> filtered_frames;
 
 
-	LPAnalysis(wavEinlesen audioClass);
-	LPAnalysis(vector<vector<short>>);
-	vector<vector<double>> convertSamplesToLPC();
+	LPSynthesis();
+	LPSynthesis(vector<vector<double>> lpcCoeff, vector<vector<double>> filteredFrames);
+	vector<vector<double>> synthesize();
+	
+
 
 };

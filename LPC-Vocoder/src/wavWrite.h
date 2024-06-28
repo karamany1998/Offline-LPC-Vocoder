@@ -14,11 +14,13 @@ class wavWrite : public Write
 protected:
 
 	wavEinlesen audioFile;
-	vector<vector<short>> internalValues;
+	
 	
 
 
 public:
+
+	vector<vector<short>> internalValues;
 
 	wavWrite();
 	wavWrite(vector<vector<short>> vec);
