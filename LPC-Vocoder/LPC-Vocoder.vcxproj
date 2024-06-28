@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="src\Einlesen.cpp" />
     <ClCompile Include="src\LPAnalysis.cpp" />
+    <ClCompile Include="src\LPSynthesis.cpp" />
     <ClCompile Include="src\openLoopPitchEstimation.cpp" />
     <ClCompile Include="src\tools.cpp" />
     <ClCompile Include="src\wavEinlesen.cpp" />
@@ -107,6 +108,7 @@
   <ItemGroup>
     <ClInclude Include="src\Einlesen.h" />
     <ClInclude Include="src\LPAnalysis.h" />
+    <ClInclude Include="src\LPSynthesis.h" />
     <ClInclude Include="src\openLoopPitchEstimation.h" />
     <ClInclude Include="src\tools.h" />
     <ClInclude Include="src\wavEinlesen.h" />

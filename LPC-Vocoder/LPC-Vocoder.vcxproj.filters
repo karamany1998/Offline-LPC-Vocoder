@@ -44,6 +44,9 @@
     <ClCompile Include="src\LPAnalysis.cpp">
       <Filter>Quelldateien\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\LPSynthesis.cpp">
+      <Filter>Quelldateien\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\openLoopPitchEstimation.h">
@@ -65,6 +68,9 @@
       <Filter>Headerdateien\src</Filter>
     </ClInclude>
     <ClInclude Include="src\LPAnalysis.h">
+      <Filter>Headerdateien\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LPSynthesis.h">
       <Filter>Headerdateien\src</Filter>
     </ClInclude>
   </ItemGroup>
