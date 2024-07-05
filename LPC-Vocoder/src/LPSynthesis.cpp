@@ -18,6 +18,11 @@ LPSynthesis::LPSynthesis(vector<vector<double>> lpcCoeff , vector<vector<double>
 vector<vector<double>> LPSynthesis::synthesize()
 {
 
+	int numSamplesPerFrame = 0; 
+	if (this->filtered_frames.size() > 0)
+	{
+		numSamplesPerFrame = this->filtered_frames[0].size();
+	}
 
 	double initialStates[11];
 	vector<vector<double>> synthesized_vector;
@@ -36,7 +41,6 @@ vector<vector<double>> LPSynthesis::synthesize()
 	for (int i = 0; i < LPC_Coefficients.size(); i++)
 	{
 		
-
 		//array used to save output frame after filtering the input frame
 		double outputBuffer[160];
 
@@ -47,9 +51,9 @@ vector<vector<double>> LPSynthesis::synthesize()
 		//initalize the IIR-filter
 		InitIIR(initialStates,numerator.data(), currentCoefficient , 11);
 
-		
 		//execute the IIR-operation and save the result in output buffer
-		ExecuteIIRDF2(this->filtered_frames[i].data(), outputBuffer, 160);
+		int loopOver = filtered_frames.size(); //this variable is used with milestone 11 because number of frames could be different between music and speech(LPC)
+		ExecuteIIRDF2(this->filtered_frames[i%loopOver].data(), outputBuffer, 160);
 		
 		vector<double> curr(outputBuffer, outputBuffer + 160);
 		synthesized_vector.push_back(curr);
@@ -57,7 +61,6 @@ vector<vector<double>> LPSynthesis::synthesize()
 		//save the internal states to the initialStates array(the IIR changes internally after each iteration, so we need to save this change for the next 
 		//iteration
 		ReturnStatesIIR(initialStates);
-
 		TerminateIIR(); //terminate IIR-filter and iterate to the next audio frame with the modified states
 
 	}
