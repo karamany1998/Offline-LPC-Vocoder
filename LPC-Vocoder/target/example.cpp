@@ -122,16 +122,11 @@ vector<vector<double>> determineRestSignal()
 	vector<vector<short>>& audioFrames = readerObj.audioRahmen;
 	vector<vector<double>> audioFramesD;
 
-	
-	
-	
 	LPAnalysis LPC_obj(audioFrames);
 	LPC_obj.convertSamplesToLPC();
-
 	vector<valarray<double>>& LPC_coefficients = LPC_obj.LPC_Coefficients;
 	double initalStates[11];
 	double LP_arr[11];
-
 
 	for (int j = 0; j < 11; j++)
 		LP_arr[j] = LPC_coefficients[0][j];
@@ -142,7 +137,6 @@ vector<vector<double>> determineRestSignal()
 	}
 	
 	vector<vector<double>> restSignal;
-
 	//move over all the frames
 	for (int i = 0; i < audioFrames.size(); i++)
 	{
@@ -151,7 +145,6 @@ vector<vector<double>> determineRestSignal()
 
 		//array used to save output frame after filtering the input frame
 		double outputBuffer[160]; 
-
 		//the current LPC-Coefficients for frame i
 		double currentCoefficient[11];
 		for (int j = 0; j < 11; j++)currentCoefficient[j] = LPC_coefficients[i][j];
@@ -169,16 +162,12 @@ vector<vector<double>> determineRestSignal()
 		//save the internal states to the initialStates array(the FIR changes internally after each iteration, so we need to save this change for the next 
 		//iteration
 		ReturnStatesFIR(initalStates); 
-
 		TerminateFIR(); //terminate FIR-filter and iterate to the next audio frame with the modified states
 	
 	}
 
-	 
 	cout << "Filtering the input signal is over..." << endl;
-	
 	cout << "=============================================================" << endl;
-
 	cout << "what name would you like to name the rest signal " << endl;
 	
 	string restSignalName; 
@@ -400,6 +389,14 @@ void mileStone8()	//synthesize signal and modify the gain and then write to file
 
 
 
+/*
+*this method is used in both milestone9 and 10->The only difference is that the second argument is set to false in milestone9 and true in milestone10.
+*It takes in an input signal(a vector of  audio frames) and returns back a signal where each frame has pulses at a specific distance determine
+*by the variable pitch
+* 
+* modelNoise adds a random noise integer between 0 and a maximum value
+
+*/
 vector<vector<double>> audioSamplesOptimalPitch(vector<vector<short>> inputSignal , bool modelNoise)
 {	
 	//convert inputSignal to double
@@ -420,7 +417,7 @@ vector<vector<double>> audioSamplesOptimalPitch(vector<vector<short>> inputSigna
 	//consider how many samples left over from previous anregungs_frame
 	int leftOver = 0; 
 
-	
+	double min_v = 10000;
 	for (int i = 0; i < audioSamples_double.size(); i++)
 	{
 		//convert current frame from vector of doubles  to valArray of doubles
@@ -428,24 +425,31 @@ vector<vector<double>> audioSamplesOptimalPitch(vector<vector<short>> inputSigna
 		valarray<double> currFrame(audioSamples_double[i].data() , audioSamples_double[i].size());
 		
 		bool check = pitchEstimator.setInput(currFrame);
+
 		if (check == false)
 		{
 			cout << "pitch estimation failed ...." << endl;
 		}
 
 		int pitch = pitchEstimator.determineOpenLoopPitch(v_crit);
-		vector<double> vec(160);
-		int v_grenze = 0; 
+
+		//cout << "current pitch: " << pitch << endl;
+		min_v = min(min_v, v_crit);
+		//cout << "current v_crit is " << v_crit << endl;
+
+		double v_grenze = 0;
 		double g_mix = 0; 
 		if (v_crit > 0)
 		{
-			g_mix = (double)(1 - v_crit) / (1 - v_grenze);
+			g_mix = (double)(1 - v_crit) / (1.0 - (double)v_grenze);
+			//cout << "g_mix is " << g_mix << endl;
 		}
 		
-
 		//set the start value for j
 		int j;
-		if (leftOver != 0 && (pitch-leftOver>=0))	//
+		//if there's left over samples from previous frame and the current pitch is larger, then we can start at j=pitch - leftOver
+		//otherwise pitch lower than leftOver and we will land in previous frame, so in this case j set to 0
+		if (pitch-leftOver>=0)	
 		{
 			j = pitch - leftOver; 
 		}
@@ -454,19 +458,22 @@ vector<vector<double>> audioSamplesOptimalPitch(vector<vector<short>> inputSigna
 			j = 0;
 		}
 
+		vector<double> vec(160);
 		for (; j < 160; j += pitch)
 		{
-			int noiseVal = (rand()) % 1000; //set 1000 as the max value for the noise value
+			int noiseVal = (rand()) % 501; //set interval for the noise component 
+
 			if (j < 160)leftOver = 160 - j;
+
 			if (modelNoise)
 			{
 				vec[j] = (1 - g_mix) * 1000 + g_mix * noiseVal;
+				cout << "value of excitation is " << vec[j] << endl;
 			}
 			else
 			{
 				vec[j] = 1000;
-			}
-			
+			}	
 		}
 		anregungsVector.push_back(vec);
 	}
@@ -474,12 +481,19 @@ vector<vector<double>> audioSamplesOptimalPitch(vector<vector<short>> inputSigna
 }
 
 
+//this function takes the Anregungs_vektor and the rest signal
+//and then finds the value g_all that makes anregung_vectors have the same energy as the rest signal 
 vector<vector<double>> getAnregungWithGain(vector<vector<double>> anregung_vectors, vector<vector<double>> restSignal)
 {
 
 	double g_all = 1;
-	for (int i = 0; i < restSignal.size(); i++)
+	//int numFrame = min(anregung_vectors.size(), restSignal.size());
+	
+	for (int i = 0; i < restSignal.size() ; i++)
 	{
+		
+		if (i >= restSignal.size())break;
+
 		double analysis_energy = 0;
 		double anregung_energy = 0;
 
@@ -494,19 +508,75 @@ vector<vector<double>> getAnregungWithGain(vector<vector<double>> anregung_vecto
 		}
 
 		g_all = sqrt(analysis_energy / anregung_energy);
-
+		
 		//multiply all values of testInput by g_all to make it have the same energy as the analysed signal
 		for (int j = 0; j < anregung_vectors[i].size(); j++) anregung_vectors[i][j] = g_all * anregung_vectors[i][j];
-
 	}
 	return anregung_vectors;
-
-
 }
 
 
+//MILESTONE_9 STARTS HERE
+//============================================================================================
 
 void mileStone9()
+{
+	//first we need to determine the analysed signal 
+	//second, we need to make sure that the pitched-signal has the same energy as the analysed signal.
+
+	cout << "what name's the name of the audio file do you want to analyse?" << endl;
+	string nameAnalysis;
+	cin >> nameAnalysis;
+
+	//read the sprache wav signal and save the samples in a vector<vector<short>> 
+	wavEinlesen einlesenWavObj(nameAnalysis);
+	einlesenWavObj.readFile();
+
+	vector<vector<short>> audioSamples = einlesenWavObj.audioRahmen;
+	vector<vector<double>> anregung_vectors = audioSamplesOptimalPitch(audioSamples , false);
+	
+	////=======================================================================================================================
+	//(Determining  g_all, so that testInput has the same energy as the signal after analysis ->check function getAnregungWithGain()
+
+	vector<vector<double>> restSignal = determineRestSignal();
+	anregung_vectors = getAnregungWithGain(anregung_vectors, restSignal);
+	
+	////=======================================================================================================================
+	//=======================================================================================================================
+	LPAnalysis analysisObj(audioSamples);
+	vector<vector<double>> LPC_values = analysisObj.convertSamplesToLPC();
+
+	vector<vector<double>> anregung_vectors_double;
+	for (auto x : anregung_vectors)
+	{
+		vector<double> curr(x.begin(), x.end());
+		anregung_vectors_double.push_back(curr);
+
+	}
+
+
+	LPSynthesis synthesisObj(LPC_values, anregung_vectors);
+	vector<vector<double>> synthesized_frames = synthesisObj.synthesize();
+
+	vector<vector<short>> synthesized_frames_short;
+	for (auto x : synthesized_frames)
+	{
+		vector<short> curr(x.begin(), x.end());
+		synthesized_frames_short.push_back(curr);
+	}
+
+	//============================================================================================
+	wavWrite wavObj(synthesized_frames_short);
+	cout << "what name for the synthesized audio samples do you want?" << endl;
+	string name;
+	cin >> name;
+	wavObj.convertVectorToWav(name);
+}
+
+
+//MILESTONE10 STARTS HERE
+//============================================================================================
+void mileStone10()
 {
 	//first we need to determine the analysed signal 
 	//second, we need to make sure that the pitched-signal has the same energy as the analysed signal.
@@ -523,27 +593,15 @@ void mileStone9()
 
 	//We will choose different pitch-periods and just give different signals to the LPSynthesis class to test it
 
-	
-
-
-
-	vector<vector<double>> anregung_vectors = audioSamplesOptimalPitch(audioSamples , false);
-	
-
-
+	vector<vector<double>> anregung_vectors = audioSamplesOptimalPitch(audioSamples, true);
 	////=======================================================================================================================
 	//(Determining the g_all, so that testInput has the same energy as the signal after analysis ->check function getAnregungWithGain()
-	double g_all = 1;
 
 	vector<vector<double>> restSignal = determineRestSignal();
 	anregung_vectors = getAnregungWithGain(anregung_vectors, restSignal);
-	
-
 
 	////=======================================================================================================================
 	//=======================================================================================================================
-
-
 	LPAnalysis analysisObj(audioSamples);
 	vector<vector<double>> LPC_values = analysisObj.convertSamplesToLPC();
 
@@ -578,58 +636,58 @@ void mileStone9()
 }
 
 
-void mileStone10()
+void mileStone11()
 {
-	//first we need to determine the analysed signal 
-	//second, we need to make sure that the pitched-signal has the same energy as the analysed signal.
 
-	cout << "what name's the name of the audio file do you want to analyse?" << endl;
-	string nameAnalysis;
-	cin >> nameAnalysis;
+	cout << "This is the last milestone :D :D :D " << endl;
+	cout << "please enter the name of the music file that you want to use as excitation..." << endl;
+	string music; 
+	cin >> music; 
 
-	//read the sprache wav signal and save the samples in a vector<vector<short>> 
-	wavEinlesen einlesenWavObj(nameAnalysis);
-	einlesenWavObj.readFile();
-
-	vector<vector<short>> audioSamples = einlesenWavObj.audioRahmen;
-
-	//We will choose different pitch-periods and just give different signals to the LPSynthesis class to test it
+	cout << "please enter the name for the speech file that you want to analyse..." << endl;
+	string speech;
+	cin >> speech;
 
 
+	wavEinlesen einlesenWavObj_musik(music);
+	einlesenWavObj_musik.readFile();
+	wavEinlesen einlesenWavObj_speech(speech);
+	einlesenWavObj_speech.readFile();
 
+	vector<vector<short>>& music_excitation = einlesenWavObj_musik.audioRahmen;
+	vector<vector<short>>& audioSamples = einlesenWavObj_speech.audioRahmen;
+	vector<vector<short>> music_excitation_extended; 
 
-
-	vector<vector<double>> anregung_vectors = audioSamplesOptimalPitch(audioSamples, true);
-
-
-
-	////=======================================================================================================================
-	//(Determining the g_all, so that testInput has the same energy as the signal after analysis ->check function getAnregungWithGain()
-	
-
-	vector<vector<double>> restSignal = determineRestSignal();
-	anregung_vectors = getAnregungWithGain(anregung_vectors, restSignal);
-
-
-
-	////=======================================================================================================================
-	//=======================================================================================================================
-
-
-	LPAnalysis analysisObj(audioSamples);
-	vector<vector<double>> LPC_values = analysisObj.convertSamplesToLPC();
-
-	vector<vector<double>> anregung_vectors_double;
-	for (auto x : anregung_vectors)
+	//in this part we will extend the music_excitation signal with frames from the beginning to match the size of the audio signal
+	//we do this by using the modulo operator in this way i%loopBack which will give us the starting frames if i is larger than
+	//the size of themusic_excitation vector
+	int loopBack = music_excitation.size();	
+	for (int i = 0; i < audioSamples.size(); i++)
 	{
-		vector<double> curr(x.begin(), x.end());
-		anregung_vectors_double.push_back(curr);
+		music_excitation_extended.push_back(music_excitation[i % loopBack]);
+	}
+	vector<vector<double>> music_excitation_double;
 
+	cout << "number of music excitation frames is " << music_excitation.size() << endl;
+	for (int i = 0; i < music_excitation_extended.size(); i++)
+	{
+		vector<double> curr(music_excitation_extended[i].begin(), music_excitation_extended[i].end());
+		music_excitation_double.push_back(curr);
 	}
 
 
-	LPSynthesis synthesisObj(LPC_values, anregung_vectors);
+	vector<vector<double>> restSignal = determineRestSignal();
+	music_excitation_double = getAnregungWithGain(music_excitation_double, restSignal);
+
+
+	
+	LPAnalysis analysisObj(audioSamples);
+	vector<vector<double>> LPC_values = analysisObj.convertSamplesToLPC();
+
+	
+	LPSynthesis synthesisObj(LPC_values, music_excitation_double);
 	vector<vector<double>> synthesized_frames = synthesisObj.synthesize();
+
 
 	vector<vector<short>> synthesized_frames_short;
 	for (auto x : synthesized_frames)
@@ -637,11 +695,7 @@ void mileStone10()
 		vector<short> curr(x.begin(), x.end());
 		synthesized_frames_short.push_back(curr);
 	}
-
-
-	//============================================================================================
-
-
+	//===========================================================================================
 	wavWrite wavObj(synthesized_frames_short);
 	cout << "what name for the synthesized audio samples do you want?" << endl;
 	string name;
@@ -669,10 +723,9 @@ int main()
 	//mileStone8();
 
 	//mileStone9();
+	//mileStone10();
+	mileStone11();
 
-	mileStone10();
-
-	
 
 	return 0; 
 }
