@@ -1,22 +1,21 @@
-# Institutsprojekt: Entwicklung eines niederratigen Sprachcodecs
-Dies ist die Code-Vorgabe für das 4.-Semesterprojekt. 
 
-# Hinweise
+Implementation of an offline audio codec.
 
-## Entwicklungsumgebung
-Ursprünglich ist das Projekt für Visual Studio 2015 konzipiert. Die Verwendung von neuerer Version scheint problemlos möglich.
+The code has different classes such as
+1-wavEinlesen: which reads a .wav audio file and extracts the audio samples 
+2-wavWrite: which writes the samples to a .wav file and then you can hear the audio by just opening the file.
+3- LPAnalysis: performs LPC analysis and determines the LP Coefficients which are used later to synthesize the audio.
+4- LPSynthesis: takes the excitation signal(this signal is basically pulses at a specific pitch period which varies from frame to frame), the LP Coefficients and then
+performs IIR-filter(which is just the reverse of the FIR-filtering operation done in LPAnalysis), then the output of this step would be the synthesized audio.
 
-Unter macOS oder Linux kann auch [Visual Studio Code](https://code.visualstudio.com) in Kombination mit dem GCC-Kompiler verwendet werden. Dazu steht eine [CMake](https://cmake.org)-Datei zur Verfügung. Leider können wir für diese Projekt-Variante nur eingeschränkten Support geben und empfehlen daher die Nutzung von Visual Studio unter Windows.
+There are also different functions in example.cpp, by running mileStone10() and enter the file called sprache when prompted to do so, you can see  the overall operation of the audio codec. Previous milestones test different functionalities such as reading and writing .wav files and LPAnalysis, but everything culminates in
+milestone10.
 
-### Visual Studio Code
-Bei Verwendung von Visual Studio Code ist die Nutzung folgender Extensions nützlich:
-* [CMake](https://marketplace.visualstudio.com/items?itemName=twxs.cmake)
-* [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
-* [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
 
-Nun kann der Order, in dem die ```CMakeLists.txt``` liegt einfach geöffnet werden.
+Done by Mohamed Elkaramany
+Finished on 05/07/2024
 
-# Maryam Parts
-Hello! I am Maryam.
+
+
 
 
